@@ -1,0 +1,3 @@
+#cmakedefine FileParser_VERSION_MAJOR @FileParser_VERSION_MAJOR@
+#cmakedefine FileParser_VERSION_MINOR @FileParser_VERSION_MINOR@
+#cmakedefine FileParser_VERSION_PATCH @FileParser_VERSION_PATCH@
