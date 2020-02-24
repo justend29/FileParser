@@ -14,10 +14,9 @@ namespace json {
     JsonObject &parseStringValue(const std::string &key);
 
     JsonObject &parseTrueValue(const std::string &key);
-
-   // JsonObject parseFalseValue(const std::string &key) {
-   //   const static auto = "false";
-   // }
+    JsonObject &parseFalseValue(const std::string &key);
+    
+    JsonObject &parseNullValue(const std::string &key);
 
     JsonObject &detectValueType(const std::string &key);
 

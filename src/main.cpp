@@ -12,7 +12,9 @@ using namespace std::literals;
 std::string_view jString = "{"
                         "  \"key\":\"value\","
                         "  \"another key\":\"another value\","
-                        "  \"yet another key\":\"yet another value\""
+                        "  \"yet another key\":\"yet another value\","
+                        "  \"key for boolean\": true,"
+                        "  \"key for false boolean\": false"
                         "}"sv;
 
 int main() {

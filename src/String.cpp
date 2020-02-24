@@ -8,6 +8,6 @@ String::String(std::string &&value) : value{value} {
 }
 
 std::ostream &String::printTo(std::ostream &os) const {
-  os << this->value;
+  os << '\"' << this->value << '\"';
   return os;
 }

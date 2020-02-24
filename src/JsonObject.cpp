@@ -16,8 +16,8 @@ JsonObject::mapped_type &JsonObject::operator[](JsonObject::key_type &&key) {
 
 std::ostream &JsonObject::printTo(std::ostream &os) const {
   for(const auto &pair : this->map) {
-    os << '{' << pair.first << " : ";
-    (pair.second)->printTo(os) << '}';
+    os << '\"' << pair.first << "\":";
+    (pair.second)->printTo(os) << ',';
   }
   return os;
 }
