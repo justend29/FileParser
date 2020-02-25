@@ -2,7 +2,7 @@ cmake_minimum_required( VERSION 3.16.4 )
 project( FileParser VERSION 0 )
 
 # target
-add_executable( fileParser ./src/main.cpp ./src/JsonParser.cpp ./src/JsonObject.cpp ./src/Bool.cpp ./src/String.cpp ./src/Value.cpp)
+add_executable( fileParser ./src/main.cpp ./src/JsonParser.cpp ./src/JsonObject.cpp ./src/Bool.cpp ./src/String.cpp ./src/Value.cpp ./src/Null.cpp )
 
 configure_file( ${CMAKE_PROJECT_NAME}Config.hpp.in ../src/${CMAKE_PROJECT_NAME}Config.hpp )
 

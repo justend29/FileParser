@@ -2,6 +2,7 @@
 #include "FileParser/JsonObject.hpp"
 #include "FileParser/String.hpp"
 #include "FileParser/Bool.hpp"
+#include "FileParser/Null.hpp"
 #include <sstream>
 #include <ostream>
 #include <memory>
@@ -77,12 +78,32 @@ JsonObject &JsonParser::parseFalseValue(const std::string &key) {
   throw std::invalid_argument("expected , or }");
 }
 
+JsonObject &JsonParser::parseNullValue(const std::string &key) {
+  const static std::string ref{"null"};
+  auto end = ref.cend();
+  char &&ch = nextChar();
+  for(auto it = ref.cbegin()+1; it!=end; ++it) {
+    if(*it != ch) {
+      throw std::invalid_argument("Expected null. May have forgotten quotes");
+    }
+    ch = nextChar();
+  }
+  if(ch == ',') {
+    jsonObject[key]=std::make_unique<Null>();
+    return parseKey();
+  } else if(ch == '}') {
+    jsonObject[key]=std::make_unique<Null>();
+    return jsonObject;
+  } 
+  throw std::invalid_argument("expected , or }");
+}
+
 JsonObject &JsonParser::detectValueType(const std::string &key) {
   const char &ch = nextChar();
   if(ch == '"') return parseStringValue(key);
   else if(ch == 't') return parseTrueValue(key);
   else if(ch == 'f') return parseFalseValue(key);
-  //else if(ch == 'n') return parseNullValue(key);
+  else if(ch == 'n') return parseNullValue(key);
   //else if(ch == '{')  
   throw std::invalid_argument("Expected \", numeric value, {, or [");
 }
