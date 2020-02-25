@@ -11,7 +11,7 @@ namespace json {
   class JsonObject : public Value {
   private:
     using JsonMap = std::unordered_map<std::string, std::unique_ptr<Value>>;
-    JsonMap map;
+    JsonMap map{};
   protected:
     virtual std::ostream &printTo(std::ostream &os) const override;
   public:  
