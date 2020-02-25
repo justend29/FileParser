@@ -10,6 +10,27 @@
 using namespace json;
 using Value_p = JsonObject::PValue;
 
+JsonParser::JsonParser(std::string_view string) 
+  : it{string.begin()}, end{string.end()}, currentObject{&jsonObject} {
+}
+
+JsonObject &JsonParser::detectInitialType() {
+  const char &ch = nextChar();
+  if(ch == '{') return parseKey();
+  //else if(ch == '[') return startJsonArray();
+  throw std::invalid_argument("Excpected { or [ to start");
+}
+
+JsonObject &JsonParser::detectValueType(const std::string &key) {
+  const char &ch = nextChar();
+  if(ch == '"') return parseStringValue(key);
+  else if(ch == 't') return parseTrueValue(key);
+  else if(ch == 'f') return parseFalseValue(key);
+  else if(ch == 'n') return parseNullValue(key);
+  else if(ch == '{') return parseMapValue(key);
+  throw std::invalid_argument("Expected \", numeric value, {, or [");
+}
+
 char JsonParser::nextChar() {
   // TODO: pass range of characters to skip
   while(it != end) {
@@ -19,6 +40,23 @@ char JsonParser::nextChar() {
     }
   }
   throw std::invalid_argument("Reached end of input string");
+}
+
+JsonObject &JsonParser::parseKey() {
+  char &&ch = nextChar();
+  std::ostringstream key;
+  if(ch == '"') {
+    while( (ch = nextChar()) != '"') {
+      key << ch;
+    }
+    if(nextChar() == ':') {
+      return detectValueType(key.str());
+    } else {
+      throw std::invalid_argument("Expected colon after key" + key.str());
+    }
+  } else {
+    throw std::invalid_argument("Expected double quote to start key");
+  }
 }
 
 JsonObject &JsonParser::parseStringValue(const std::string &key) {
@@ -102,42 +140,4 @@ JsonObject &JsonParser::parseMapValue(const std::string &key) {
   auto &pMappedObject = jsonObject[key]=std::make_unique<JsonObject>(); 
   currentObject = dynamic_cast<JsonObject*>(pMappedObject.get());
   return parseKey();
-}
-
-JsonObject &JsonParser::detectValueType(const std::string &key) {
-  const char &ch = nextChar();
-  if(ch == '"') return parseStringValue(key);
-  else if(ch == 't') return parseTrueValue(key);
-  else if(ch == 'f') return parseFalseValue(key);
-  else if(ch == 'n') return parseNullValue(key);
-  else if(ch == '{') return parseMapValue(key);
-  throw std::invalid_argument("Expected \", numeric value, {, or [");
-}
-
-JsonObject &JsonParser::parseKey() {
-  char &&ch = nextChar();
-  std::ostringstream key;
-  if(ch == '"') {
-    while( (ch = nextChar()) != '"') {
-      key << ch;
-    }
-    if(nextChar() == ':') {
-      return detectValueType(key.str());
-    } else {
-      throw std::invalid_argument("Expected colon after key" + key.str());
-    }
-  } else {
-    throw std::invalid_argument("Expected double quote to start key");
-  }
-}
-
-JsonObject &JsonParser::detectInitialType() {
-  const char &ch = nextChar();
-  if(ch == '{') return parseKey();
-  //else if(ch == '[') return startJsonArray();
-  throw std::invalid_argument("Excpected { or [ to start");
-}
-
-JsonParser::JsonParser(std::string_view string) 
-  : it{string.begin()}, end{string.end()}, currentObject{&jsonObject} {
 }
