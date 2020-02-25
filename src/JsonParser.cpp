@@ -29,10 +29,10 @@ JsonObject &JsonParser::parseStringValue(const std::string &key) {
   }
   ch = nextChar();
   if(ch == ',') {
-    jsonObject[key]=std::make_unique<String>(value.str());
+    (*currentObject)[key]=std::make_unique<String>(value.str());
     return parseKey();
   } else if(ch == '}') {
-    jsonObject[key]=std::make_unique<String>(value.str());
+    (*currentObject)[key]=std::make_unique<String>(value.str());
     return jsonObject;
   } 
   throw std::invalid_argument("expected , or }");
@@ -49,10 +49,10 @@ JsonObject &JsonParser::parseTrueValue(const std::string &key) {
     ch = nextChar();
   }
   if(ch == ',') {
-    jsonObject[key]=std::make_unique<Bool>(true);
+    (*currentObject)[key]=std::make_unique<Bool>(true);
     return parseKey();
   } else if(ch == '}') {
-    jsonObject[key]=std::make_unique<Bool>(true);
+    (*currentObject)[key]=std::make_unique<Bool>(true);
     return jsonObject;
   } 
   throw std::invalid_argument("expected , or }");
@@ -69,10 +69,10 @@ JsonObject &JsonParser::parseFalseValue(const std::string &key) {
     ch = nextChar();
   }
   if(ch == ',') {
-    jsonObject[key]=std::make_unique<Bool>(false);
+    (*currentObject)[key]=std::make_unique<Bool>(false);
     return parseKey();
   } else if(ch == '}') {
-    jsonObject[key]=std::make_unique<Bool>(false);
+    (*currentObject)[key]=std::make_unique<Bool>(false);
     return jsonObject;
   } 
   throw std::invalid_argument("expected , or }");
@@ -89,13 +89,19 @@ JsonObject &JsonParser::parseNullValue(const std::string &key) {
     ch = nextChar();
   }
   if(ch == ',') {
-    jsonObject[key]=std::make_unique<Null>();
+    (*currentObject)[key]=std::make_unique<Null>();
     return parseKey();
   } else if(ch == '}') {
-    jsonObject[key]=std::make_unique<Null>();
+    (*currentObject)[key]=std::make_unique<Null>();
     return jsonObject;
   } 
   throw std::invalid_argument("expected , or }");
+}
+
+JsonObject &JsonParser::parseMapValue(const std::string &key) {
+  auto &pMappedObject = jsonObject[key]=std::make_unique<JsonObject>(); 
+  currentObject = dynamic_cast<JsonObject*>(pMappedObject.get());
+  return parseKey();
 }
 
 JsonObject &JsonParser::detectValueType(const std::string &key) {
@@ -104,7 +110,7 @@ JsonObject &JsonParser::detectValueType(const std::string &key) {
   else if(ch == 't') return parseTrueValue(key);
   else if(ch == 'f') return parseFalseValue(key);
   else if(ch == 'n') return parseNullValue(key);
-  //else if(ch == '{')  
+  else if(ch == '{') return parseMapValue(key);
   throw std::invalid_argument("Expected \", numeric value, {, or [");
 }
 
@@ -133,5 +139,5 @@ JsonObject &JsonParser::detectInitialType() {
 }
 
 JsonParser::JsonParser(std::string_view string) 
-  : it{string.begin()}, end{string.end()} {
+  : it{string.begin()}, end{string.end()}, currentObject{&jsonObject} {
 }

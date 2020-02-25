@@ -13,7 +13,7 @@ namespace json {
     using JsonMap = std::unordered_map<std::string, std::unique_ptr<Value>>;
     JsonMap map;
   protected:
-    std::ostream &printTo(std::ostream &os) const override;
+    virtual std::ostream &printTo(std::ostream &os) const override;
   public:  
     using value_type = typename JsonMap::value_type;
     using iterator = typename JsonMap::iterator;

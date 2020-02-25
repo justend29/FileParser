@@ -9,7 +9,7 @@ namespace json {
   private:
     std::string value;
   protected:
-    std::ostream &printTo(std::ostream &os) const override;
+    virtual std::ostream &printTo(std::ostream &os) const override;
   public:
     String() = default;
     String(const String &other) = default;

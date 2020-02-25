@@ -15,7 +15,8 @@ std::string_view jString = "{"
                         "  \"yet another key\":\"yet another value\","
                         "  \"key for boolean\": true,"
                         "  \"key for false boolean\": false,"
-                        "  \"nullKey\": null"
+                        "  \"nullKey\": null,"
+                        "  \"mapKey\": { \"keyInMap\":\"valueInMap\"}"
                         "}"sv;
 
 int main() {

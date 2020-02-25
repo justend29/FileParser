@@ -11,10 +11,10 @@ namespace json {
   private:
     Arr array;
   protected:
-    std::ostream &printTo(std::ostream &os) const override {
+    virtual std::ostream &printTo(std::ostream &os) const override {
       os << '[';
-      auto it = this->array.begin();
-      auto end = this->array.end()-1;
+      auto it = this->array.cbegin();
+      auto end = this->array.cend()-1;
       for(;it<end; ++it) {
         os << *it << ", ";
       }
@@ -32,10 +32,10 @@ namespace json {
     }
     Array(Arr &&array) : array{array} {
     }
-    //template<typename...Args>
-    //Array(Args&&...args) {
-    //    array(std::forward<Args>(args)...);
-    //}
+    template<typename...Args>
+    Array(Args&&...args) {
+        array(std::forward<Args>(args)...);
+    }
 
     virtual ~Array() override = default;
   };
